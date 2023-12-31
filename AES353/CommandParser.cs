@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -16,6 +16,8 @@ public class CommandParser
     private float currentRotationAngle = 0f;
     private List<TextAnnotation> textAnnotations = new List<TextAnnotation>();
     private Bitmap currentDrawing;
+    private Dictionary<string, float> variables = new Dictionary<string, float>();
+
 
 
     // Update the CurrentPen property to include line thickness
@@ -98,6 +100,36 @@ public class CommandParser
                 case "load":
                     LoadDrawing(string.Join(" ", parts.Skip(1)));
                     break;
+                case "var":
+                    DeclareVariable(parts[1], float.Parse(parts[2]));
+                    break;
+                case "set":
+                    SetVariable(parts[1], float.Parse(parts[2]));
+                    break;
+                case "if":
+                    if (!EvaluateCondition(parts.Skip(1).ToArray()))
+                    {
+                        SkipToNextEndIf(ref i, lines);
+                    }
+                    break;
+                case "endif":
+                    // Do nothing, it's just a marker for the end of an if block.
+                    break;
+                case "loop":
+                    loopStack.Push(i);
+                    inLoop = true;
+                    break;
+                case "endloop":
+                    if (inLoop)
+                    {
+                        int loopStart = loopStack.Pop();
+                        i = loopStart - 1; // Go back to the start of the loop
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Found 'endloop' without a matching 'loop'.");
+                    }
+                    break;
 
                 default:
                     throw new ArgumentException("Unknown command");
@@ -158,9 +190,45 @@ public class CommandParser
     }
 
     // New method to set line thickness
-    private void SetLineThickness(float thickness)
+    private void SetLineThickness(float thickness)  
     {
         currentLineThickness = thickness;
+    }
+
+    private void DeclareVariable(string variableName, float value)
+    {
+        if (!variables.ContainsKey(variableName))
+        {
+            variables[variableName] = value;
+        }
+        else
+        {
+            throw new ArgumentException($"Variable '{variableName}' already exists.");
+        }
+    }
+
+    private void SetVariable(string variableName, float value)
+    {
+        if (variables.ContainsKey(variableName))
+        {
+            variables[variableName] = value;
+        }
+        else
+        {
+            throw new ArgumentException($"Variable '{variableName}' does not exist.");
+        }
+    }
+
+    public float GetVariableValue(string variableName)
+    {
+        if (variables.ContainsKey(variableName))
+        {
+            return variables[variableName];
+        }
+        else
+        {
+            throw new ArgumentException($"Variable '{variableName}' does not exist.");
+        }
     }
 
     private void AddTextAnnotation(string text)
