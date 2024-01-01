@@ -1,4 +1,4 @@
-﻿namespace AES353
+﻿namespace ase_part2
 {
     partial class Form1
     {
