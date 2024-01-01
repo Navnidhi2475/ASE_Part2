@@ -189,48 +189,46 @@ public class CommandParser
         currentRotationAngle = angleDegrees;
     }
 
-    // New method to set line thickness
     private void SetLineThickness(float thickness)  
     {
         currentLineThickness = thickness;
     }
 
     private void DeclareVariable(string variableName, float value)
+{
+    if (!variables.ContainsKey(variableName))
     {
-        if (!variables.ContainsKey(variableName))
-        {
-            variables[variableName] = value;
-        }
-        else
-        {
-            throw new ArgumentException($"Variable '{variableName}' already exists.");
-        }
+        variables[variableName] = value;
     }
-
-    private void SetVariable(string variableName, float value)
+    else
     {
-        if (variables.ContainsKey(variableName))
-        {
-            variables[variableName] = value;
-        }
-        else
-        {
-            throw new ArgumentException($"Variable '{variableName}' does not exist.");
-        }
+        throw new ArgumentException($"Variable '{variableName}' already exists.");
     }
+}
 
-    public float GetVariableValue(string variableName)
+private void SetVariable(string variableName, float value)
+{
+    if (variables.ContainsKey(variableName))
     {
-        if (variables.ContainsKey(variableName))
-        {
-            return variables[variableName];
-        }
-        else
-        {
-            throw new ArgumentException($"Variable '{variableName}' does not exist.");
-        }
+        variables[variableName] = value;
     }
+    else
+    {
+        throw new ArgumentException($"Variable '{variableName}' does not exist.");
+    }
+}
 
+public float GetVariableValue(string variableName)
+{
+    if (variables.ContainsKey(variableName))
+    {
+        return variables[variableName];
+    }
+    else
+    {
+        throw new ArgumentException($"Variable '{variableName}' does not exist.");
+    }
+}
     private void AddTextAnnotation(string text)
     {
         if (!string.IsNullOrWhiteSpace(text))
