@@ -17,6 +17,9 @@ public class CommandParser
     private List<TextAnnotation> textAnnotations = new List<TextAnnotation>();
     private Bitmap currentDrawing;
     private Dictionary<string, float> variables = new Dictionary<string, float>();
+    private Stack<int> loopStack = new Stack<int>();
+    private bool inLoop = false;
+    private int i = 0;
 
 
 
@@ -113,7 +116,12 @@ public class CommandParser
                     }
                     break;
                 case "endif":
-                    // Do nothing, it's just a marker for the end of an if block.
+                    break;
+                case "method":
+                    DefineMethod(parts[1], lines.Skip(i + 1).ToList());
+                    SkipToNextEndMethod(ref i, lines);
+                    break;
+                case "endmethod":
                     break;
                 case "loop":
                     loopStack.Push(i);
@@ -193,6 +201,62 @@ public class CommandParser
     {
         currentLineThickness = thickness;
     }
+
+    private void SkipToNextEndMethod(ref int currentIndex, string[] lines)
+    {
+        int methodCount = 1;
+        currentIndex++;
+
+        while (methodCount > 0 && currentIndex < lines.Length)
+        {
+            if (lines[currentIndex].ToLower().Trim() == "method")
+            {
+                methodCount++;
+            }
+            else if (lines[currentIndex].ToLower().Trim() == "endmethod")
+            {
+                methodCount--;
+            }
+
+            currentIndex++;
+        }
+
+        if (methodCount > 0)
+        {
+            throw new InvalidOperationException("Mismatched 'method' and 'endmethod' statements.");
+        }
+
+        currentIndex--; // Decrement to the last 'endmethod' line
+    }
+    private void DefineMethod(string methodName, List<string> methodBody)
+    {
+        if (!methods.ContainsKey(methodName))
+        {
+            methods[methodName] = methodBody;
+        }
+        else
+        {
+            throw new ArgumentException($"Method '{methodName}' is already defined.");
+        }
+    }
+
+    private void CallMethod(string methodName)
+    {
+        methodName = methodName.TrimEnd('(', ')');
+        if (methods.ContainsKey(methodName))
+        {
+            List<string> methodBody = methods[methodName];
+            foreach (var line in methodBody)
+            {
+                ExecuteCommand(line);
+            }
+        }
+        else
+        {
+            throw new ArgumentException($"Method '{methodName}' is not defined.");
+        }
+    }
+
 
     private void DeclareVariable(string variableName, float value)
 {
