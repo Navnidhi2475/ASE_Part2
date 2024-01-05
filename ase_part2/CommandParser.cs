@@ -28,6 +28,7 @@ public class CommandParser
 
     public PointF CurrentPosition => currentPosition;
     public bool FillEnabled => fillEnabled;
+    private readonly object graphicsLock = new object();
 
     public CommandParser(TextBox codeTextBox, PictureBox displayArea)
     {
@@ -55,6 +56,8 @@ public class CommandParser
     }
     public void ExecuteProgram(string program)
     {
+        lock (graphicsLock)
+        {
         var lines = codeTextBox.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         foreach (var line in lines)
         {
@@ -146,6 +149,7 @@ public class CommandParser
 
         displayArea.Invalidate();
     }
+}
 
 
 
