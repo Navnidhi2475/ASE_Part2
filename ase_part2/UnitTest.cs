@@ -86,3 +86,47 @@ namespace ASE_part2
             Assert.AreEqual(new SizeF(50, 50), parser.GetLastDrawnRectangleSize());
         }
     }
+
+    [Test]
+   public void TestSaveProgram()
+   {
+    string originalProgram = "moveto 10 10\ndrawto 20 20";
+    string filePath = "test_program_save.txt";
+    codeTextBox.Text = originalProgram;
+
+    commandParser.SaveProgram(filePath);
+
+    string savedProgram = File.ReadAllText(filePath);
+
+    Assert.AreEqual(originalProgram, savedProgram, "Program not saved correctly to file.");
+    }
+
+    [Test]
+    public void TestLoadProgram()
+    {
+    string originalProgram = "moveto 30 30\ndrawto 40 40";
+    string filePath = "test_program_load.txt";
+    File.WriteAllText(filePath, originalProgram);
+
+    commandParser.LoadProgram(filePath);
+    string loadedProgram = codeTextBox.Text;
+
+    Assert.AreEqual(originalProgram, loadedProgram, "Program not loaded correctly from file.");
+}
+
+  [TearDown]
+  public void Cleanup()
+{
+    // Clean up created test files
+    string[] testFiles = { "test_program_save.txt", "test_program_load.txt" };
+    foreach (var file in testFiles)
+    {
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+    }
+
+    commandParser.Cleanup();
+}
+
