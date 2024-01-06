@@ -1,0 +1,74 @@
+<commands>
+    <command name="moveTo">
+        <summary>Moves the pen to a specified position.</summary>
+        <param name="x">The x-coordinate to move to.</param>
+        <param name="y">The y-coordinate to move to.</param>
+    </command>
+    <command name="drawTo">
+        <summary>Draws a line from the current position to a specified position.</summary>
+        <param name="x">The x-coordinate to draw to.</param>
+        <param name="y">The y-coordinate to draw to.</param>
+    </command>
+    <command name="clear">
+        <summary>Clears the drawing area, resetting it to a blank state.</summary>
+    </command>
+    <command name="rectangle">
+        <summary>Draws a rectangle at the current position.</summary>
+        <param name="width">The width of the rectangle.</param>
+        <param name="height">The height of the rectangle.</param>
+    </command>
+    <command name="circle">
+        <summary>Draws a circle centered at the current position.</summary>
+        <param name="radius">The radius of the circle.</param>
+    </command>
+    <command name="triangle">
+        <summary>Draws a triangle based on the provided vertices' coordinates.</summary>
+        <param name="x1">The x-coordinate of the first vertex.</param>
+        <param name="y1">The y-coordinate of the first vertex.</param>
+        <param name="x2">The x-coordinate of the second vertex.</param>
+        <param name="y2">The y-coordinate of the second vertex.</param>
+        <param name="x3">The x-coordinate of the third vertex.</param>
+        <param name="y3">The y-coordinate of the third vertex.</param>
+    </command>
+    <command name="color">
+        <summary>Sets the color of the pen for drawing.</summary>
+        <param name="color">The name of the color to set the pen to.</param>
+    </command>
+    <command name="reset">
+        <summary>Resets the pen position to the initial starting point (usually the top-left corner).</summary>
+    </command>
+    <command name="fill">
+        <summary>Toggles the fill mode for shapes, determining whether they are filled or not.</summary>
+        <param name="state">The desired fill state, 'on' to enable filling and 'off' to disable it.</param>
+    </command>
+  <command name="var">
+    <summary>Declares a new variable with a specified initial value.</summary>
+    <param name="variableName">The name of the variable to declare.</param>
+    <param name="value">The initial value of the variable.</param>
+</command>
+<command name="set">
+    <summary>Sets the value of an existing variable.</summary>
+    <param name="variableName">The name of the variable to set.</param>
+    <param name="value">The new value to assign to the variable.</param>
+</command>
+<command name="if">
+    <summary>Evaluates a condition and skips to the corresponding 'endif' if the condition is false.</summary>
+    <param name="condition">The condition to evaluate.</param>
+</command>
+<command name="endif">
+    <summary>Marks the end of an 'if' block.</summary>
+</command>
+<command name="loop">
+    <summary>Begins a loop block which repeats until 'endloop' is reached.</summary>
+</command>
+<command name="endloop">
+    <summary>Marks the end of a loop block and returns control to the start of the loop.</summary>
+</command>
+<command name="method">
+    <summary>Defines a new method with a name and a body of commands.</summary>
+    <param name="methodName">The name of the method being defined.</param>
+</command>
+<command name="endmethod">
+    <summary>Marks the end of a method's definition.</summary>
+</command>
+</commands>
