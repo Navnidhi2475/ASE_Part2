@@ -12,29 +12,16 @@ namespace ase_part2
         {
             InitializeComponent();
             parser = new CommandParser(codeTextBox, displayArea);
-            displayArea.Paint += new PaintEventHandler(displayArea_Paint);
-            commandTextBox.KeyUp += new KeyEventHandler(commandTextBox_KeyUp);
-            runButton.Click += new EventHandler(click_Run);
-            syntaxButton.Click += new EventHandler(click_Syntax);
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
+            displayArea.Paint += new PaintEventHandler(displayArea_Paint);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             // Initialization that occurs when the form loads can be placed here.
         }
-        
-        private void RunProgramsConcurrently(string program1, string program2)
-        {
-            var thread1 = new Thread(() => parser.ExecuteProgram(program1));
-            var thread2 = new Thread(() => parser.ExecuteProgram(program2));
 
-            thread1.Start();
-            thread2.Start();
-        }
-
-
-        private void click_Run(object sender, EventArgs e)
+        private void RunButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -47,7 +34,7 @@ namespace ase_part2
             }
         }
 
-        private void click_Syntax(object sender, EventArgs e)
+        private void SyntaxButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -89,26 +76,33 @@ namespace ase_part2
             }
         }
 
-
         private void commandTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                var commandText = ((TextBox)sender).Text;
-                try
+                string commandText = commandTextBox.Text.Trim();
+                if (string.IsNullOrEmpty(commandText))
                 {
-                    parser.ExecuteCommand(commandText);
+                    MessageBox.Show("Please enter a command.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show("Error executing command: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    try
+                    {
+                        parser.ExecuteCommand(commandText);
+                        displayArea.Invalidate(); // Refresh the canvas after executing the command
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    // Removed the clear command to keep the text in the box
                 }
-                finally
-                {
-                    ((TextBox)sender).Clear();
-                }
+                // Prevent the event from bubbling up to other key event handlers
+                e.SuppressKeyPress = true;
             }
         }
+
 
         private void displayArea_Paint(object sender, PaintEventArgs e)
         {
