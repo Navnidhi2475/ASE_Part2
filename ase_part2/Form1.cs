@@ -21,6 +21,15 @@ namespace ase_part2
             // Initialization that occurs when the form loads can be placed here.
         }
 
+        private void RunprogramsConcurrently(string program1,string program2)
+        {
+          var thread1 = new Thread(() => parser.ExecuteProgram(program1));
+          var thread2 = new Thread(() => parser.ExecuteProgram(program2));
+
+          thread1.Start();
+          thread2.Start();
+        }  
+
         private void RunButton_Click(object sender, EventArgs e)
         {
             try
